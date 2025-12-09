@@ -10,6 +10,7 @@ APP = Flask(__name__)
 # Start page (mudar as stats que qeuro que aparceçam aqui)
 @APP.route('/')
 def index():
+    #ola
     stats = db.execute('''
         SELECT * FROM
         (SELECT COUNT(*) n_movies FROM shows)
