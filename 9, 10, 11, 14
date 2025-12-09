@@ -1,0 +1,106 @@
+-----------pergunta numero 9.1 da babs (maior metascore e se houver varios com o mesmo score apenas o que tiver maior metascore_count(ou seja mais reviews)))
+
+/*
+select g.name, s.title, m.metascore
+from shows s
+natural join metascore m
+natural join types
+natural join genres g
+where m.metascore = (
+    select max(m.metascore) 
+    from metascore m
+    natural join types 
+    natural join genres g1
+    where g1.name = g.name
+) and m.metascore_count = (
+    select max(m1.metascore_count)
+    from metascore m1
+    natural join types
+    natural join genres g2
+    where g2.genre_id = g.genre_id and m1.metascore = m.metascore 
+)
+order by g.name;
+*/
+
+
+----------pergunta numero 9.2 da babs (igual ao metascore mas com userscore)--------
+/*
+select g.name, s.title, u.userscore
+from shows s
+natural join userscore u
+natural join types
+natural join genres g
+where u.userscore = (
+    select max(u.userscore) 
+    from userscore u
+    natural join types 
+    natural join genres g1
+    where g1.name = g.name
+) and u.userscore_count = (
+    select max(u1.userscore_count)
+    from userscore u1
+    natural join types
+    natural join genres g2
+    where g2.genre_id = g.genre_id and u1.userscore = u.userscore 
+)
+order by g.name;
+*/
+
+--------exercicio 11 mas c top 20 e com pelo menos uma review de cada-------------
+/*
+select s.title, ABS(m.metascore - u.userscore) AS diferença
+from shows s
+natural join metascore m 
+natural join userscore u
+where metascore_count != 0 and userscore_count != 0
+order by diferença desc, s.title
+limit 20;
+*/
+
+--------exercicio 10 ---------
+/*
+select distinct s.title, p.name
+from shows s
+left join directors d on s.show_id = d.show_id
+left join writers w on s.show_id = w.show_id
+left join creators c on s.show_id = c.show_id
+left join top_cast tc on s.show_id = tc.show_id
+left join people p ON p.person_id = COALESCE(d.person_id, w.person_id, c.person_id, tc.person_id)
+where (d.person_id is not null and w.person_id = d.person_id)
+   or (d.person_id is not null and tc.person_id = d.person_id)
+   or (d.person_id is not null and c.person_id = d.person_id)
+   or (w.person_id is not null and tc.person_id = w.person_id)
+   or (w.person_id is not null and c.person_id = w.person_id)
+order by s.title;
+*/
+
+----------exercicio 14 mas sem atores porque nao tem todos so alguns top 100------------
+/*
+select s.title, 
+       count(distinct d.person_id) + count(distinct w.person_id) + 
+       count(distinct c.person_id) as total_people
+from shows s
+left join directors d on s.show_id = d.show_id
+left join writers w on s.show_id = w.show_id
+left join creators c on s.show_id = c.show_id
+group by s.title
+order by total_people desc
+limit 100;
+*/
+
+----------exercicio 14 mas sem atores porque nao tem todos so alguns bottom 100------------
+/*
+select s.title, 
+       count(distinct d.person_id) + count(distinct w.person_id) + 
+       count(distinct c.person_id) as total_people
+from shows s
+left join directors d on s.show_id = d.show_id
+left join writers w on s.show_id = w.show_id
+left join creators c on s.show_id = c.show_id
+group by s.title
+having total_people > 0
+order by total_people
+limit 100;
+*/
+
+

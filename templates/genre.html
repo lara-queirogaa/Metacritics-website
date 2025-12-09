@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Genre: {{ info.genre_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1>Genre: {{ info.genre_name }}</h1>
+
+    <h2>Information</h2>
+    <ul>
+        <li><strong>Number of movies in this genre:</strong> {{ info.total }}</li>
+    </ul>
+
+    <h2>Movie list</h2>
+
+    <ul>
+    {% for m in movies %}
+        <li>
+            <a href="/shows/{{ m.show_id }}/">
+                {{ m.show_id }} - {{ m.title }}
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+
+    <p><a href="/genres/">Back to genres</a></p>
+    <p><a href="/">Back to home page</a></p>
+
+</body>
+</html>

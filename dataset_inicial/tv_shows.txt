@@ -1,0 +1,7 @@
+Título: Metacritics Best TV Shows and Reviews - 2025
+
+Fonte: https://www.kaggle.com/datasets/davutb/metacritic-tv-shows?select=tv_shows.csv
+
+Colunas: ver URL acima.
+
+

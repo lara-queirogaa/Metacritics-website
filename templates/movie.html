@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ movie.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1>{{ movie.title }}</h1>
+
+    <h2>Information</h2>
+    <ul>
+        <li><strong>ID:</strong> {{ movie.show_id }}</li>
+        <li><strong>Release Date:</strong> {{ movie.releaseDate }}</li>
+        <li><strong>Rating:</strong> {{ movie.rating }}</li>
+
+        {% if movie.num_seasons != 0 %}
+            <li><strong>Number of seasons:</strong> {{ movie.num_seasons }}</li>
+            <li><strong>Duration of each episode:</strong> {{ movie.duration }}</li>
+        {% else %}
+            <li><strong>Duration:</strong> {{ movie.duration }}</li>
+        {% endif %}
+
+        <li>
+            <strong>Genres:</strong>
+            {% if genres %}
+                {% for g in genres %}
+                    {{ g.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            {% else %}
+                No genres in dataset
+            {% endif %}
+        </li>
+
+        <li><strong>Tagline:</strong> {{ movie.tagline }}</li>
+        <li><strong>Description:</strong> {{ movie.description }}</li>
+    </ul>
+
+    <h2>Main actors</h2>
+    {% if actors %}
+        <ul>
+        {% for a in actors %}
+            <li>{{ a.name }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No actors in dataset</p>
+    {% endif %}
+
+    <h2>Scores</h2>
+    {% if scores %}
+        <ul>
+        {% for s in scores %}
+            <li><strong>Metascore:</strong> {{ s.metascore }}/100</li>
+            <li><strong>Userscore:</strong> {{ s.userscore }}/100</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No scores available</p>
+    {% endif %}
+
+    <p><a href="/shows/">Back to movie list</a></p>
+    <p><a href="/">Back to home page</a></p>
+
+</body>
+</html>

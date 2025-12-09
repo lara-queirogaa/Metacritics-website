@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Movie List</h1>
+
+    <ul>
+        {% for movie in movies %}
+            <li>
+                {{ movie.show_id }} - 
+                <a href="/shows/{{ movie.show_id }}/">{{ movie.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <p><a href="/">Back to home page</a></p>
+</body>
+</html>

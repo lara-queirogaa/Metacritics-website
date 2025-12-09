@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Production Companies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Production Companies</h1>
+
+    <ul>
+        {% for company in companies %}
+            <li>
+                {{ company.producer_id }} - 
+                <a href="/production-companies/{{ company.producer_id }}/">{{ company.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <p><a href="/">Back to home page</a></p>
+</body>
+</html>
