@@ -1,37 +1,28 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <title>Shows com mesmo elenco principal</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        table { border-collapse: collapse; width: 80%; margin: 20px 0; }
-        th, td { border: 1px solid #999; padding: 8px 12px; text-align: left; }
-        th { background-color: #eee; }
-    </style>
-</head>
-<body>
-    <h1>Shows com o mesmo elenco principal em anos diferentes</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Show 1</th>
-                <th>Ano 1</th>
-                <th>Show 2</th>
-                <th>Ano 2</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in p7 %}
-            <tr>
-                <td>{{ row.show_1_title }}</td>
-                <td>{{ row.show_1_year }}</td>
-                <td>{{ row.show_2_title }}</td>
-                <td>{{ row.show_2_year }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <p><a href="/faq/">Back to FAQ</a></p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Shows com o mesmo elenco principal em anos diferentes</h1>
+
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Show 1</th>
+            <th>Ano 1</th>
+            <th>Show 2</th>
+            <th>Ano 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in p7 %}
+        <tr>
+            <td>{{ row.show_1_title }}</td>
+            <td>{{ row.show_1_year }}</td>
+            <td>{{ row.show_2_title }}</td>
+            <td>{{ row.show_2_year }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><a href="/faq/">Back to FAQ</a></p>
+{% endblock %}

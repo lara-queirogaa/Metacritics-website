@@ -1,35 +1,25 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <title>Maior userscore por género</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        table { border-collapse: collapse; width: 80%; margin: 20px 0; }
-        th, td { border: 1px solid #999; padding: 8px 12px; text-align: left; }
-        th { background-color: #eee; }
-    </style>
-</head>
-<body>
-    <h1>Maior userscore por género</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Género</th>
-                <th>Título</th>
-                <th>Userscore</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in p2 %}
-            <tr>
-                <td>{{ row.name }}</td>
-                <td>{{ row.title }}</td>
-                <td>{{ row.userscore }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <p><a href="/faq/">Back to FAQ</a></p>
-</body>
-</html>
+{% extends "base.html" %}
+{% set current_page = "faq" %}
+
+{% block content %}
+<h1>Maior userscore por género</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Género</th>
+            <th>Título</th>
+            <th>Userscore</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in p2 %}
+        <tr>
+            <td>{{ row.name }}</td>
+            <td>{{ row.title }}</td>
+            <td>{{ row.userscore }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,33 +1,24 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <title>Top 100 shows com mais pessoas na produção</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        table { border-collapse: collapse; width: 80%; margin: 20px 0; }
-        th, td { border: 1px solid #999; padding: 8px 12px; text-align: left; }
-        th { background-color: #eee; }
-    </style>
-</head>
-<body>
-    <h1>Top 100 — Shows com mais pessoas na produção</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Título</th>
-                <th>Total Pessoas</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in p9 %}
-            <tr>
-                <td>{{ row.title }}</td>
-                <td>{{ row.total_people }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <p><a href="/faq/">Back to FAQ</a></p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Top 100 — Shows com mais pessoas na produção</h1>
+
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Total Pessoas</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in p9 %}
+        <tr>
+            <td>{{ row.title }}</td>
+            <td>{{ row.total_people }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><a href="/faq/">Back to FAQ</a></p>
+{% endblock %}

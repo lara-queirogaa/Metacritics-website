@@ -1,33 +1,24 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <title>Pessoa mais envolvida em cult-shows</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        table { border-collapse: collapse; width: 50%; margin: 20px 0; }
-        th, td { border: 1px solid #999; padding: 8px 12px; text-align: left; }
-        th { background-color: #eee; }
-    </style>
-</head>
-<body>
-    <h1>Pessoa mais envolvida em cult-shows</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Shows Cult</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in p6 %}
-            <tr>
-                <td>{{ row.name }}</td>
-                <td>{{ row.cult_show_count }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <p><a href="/faq/">Back to FAQ</a></p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Pessoa mais envolvida em cult-shows</h1>
+
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Shows Cult</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in p6 %}
+        <tr>
+            <td>{{ row.name }}</td>
+            <td>{{ row.cult_show_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><a href="/faq/">Back to FAQ</a></p>
+{% endblock %}
