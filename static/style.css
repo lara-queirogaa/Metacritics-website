@@ -193,6 +193,42 @@ table tr:hover td {
     background-color: #1a1a1a; /* Highlight na linha da tabela */
 }
 
+/* --- Linha de Lista Estilo “Tabela” Ajustada --- */
+.list-line {
+  list-style-type: none;      /* Remove bullets */
+  padding: 0;
+  margin: 0 0 1em 0;
+  width: 100%;
+}
+
+.list-line li {
+  background-color: #1a1a1a; /* Fundo escuro para cada linha */
+  color: #ffffff;             /* Texto totalmente branco */
+  padding: 0;                 /* Retira padding do li, será no link */
+  border-bottom: 1px solid #333; /* Linha separadora */
+  font-family: 'Lato', sans-serif;
+}
+
+.list-line li:hover {
+  background-color: #2a2a2a; /* Hover mais claro */
+}
+
+.list-line li a.list-line-link {
+    display: block;              /* Ocupa toda a linha */
+    width: 100%;
+    color: #ffffff;              /* Texto branco */
+    text-decoration: none;       /* Remove sublinhado/pontos */
+    padding: 10px 15px;          /* Padding da linha */
+    transition: background-color 0.2s ease;
+    box-sizing: border-box;      /* Garante que padding não ultrapassa o li */
+}
+
+.list-line li a.list-line-link:hover {
+    background-color: #2a2a2a;  /* Mantém hover */
+    color: #ffffff;              /* Continua branco */
+    border-bottom: none;         /* Remove qualquer linha */
+}
+
 /* --- Ajustes Responsivos e Impressão --- */
 
 .author {

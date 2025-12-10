@@ -7,27 +7,27 @@
 </head>
 <body>
 
-    <h1>Genre: {{ info.genre_name }}</h1>
+<h1>Genre: {{ info.genre_name }}</h1>
 
-    <h2>Information</h2>
-    <ul>
-        <li><strong>Number of movies in this genre:</strong> {{ info.total }}</li>
-    </ul>
+<h2>Information</h2>
+<ul>
+    <li><strong>Number of movies in this genre:</strong> {{ info.total }}</li>
+</ul>
 
-    <h2>Movie list</h2>
+<h2>Movie list</h2>
 
-    <ul>
+<ul class="list-line">
     {% for m in movies %}
         <li>
-            <a href="/shows/{{ m.show_id }}/">
+            <a href="/shows/{{ m.show_id }}/" class="list-line-link">
                 {{ m.show_id }} - {{ m.title }}
             </a>
         </li>
     {% endfor %}
-    </ul>
+</ul>
 
-    <p><a href="/genres/">Back to genres</a></p>
-    <p><a href="/">Back to home page</a></p>
+<p><a href="/genres/">Back to genres</a></p>
+<p><a href="/">Back to home page</a></p>
 
 </body>
 </html>

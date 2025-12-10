@@ -11,13 +11,14 @@
 
 <h2>Filmes e Papéis</h2>
 
-<ul>
-{% for m in movies %}
-    <li>{{ m.role }} – 
-        <a href="/shows/{{ m.show_id }}/">
-                 {{ m.title }}
+<ul class="list-line">
+    {% for m in movies %}
+        <li>
+            <a href="/shows/{{ m.show_id }}/" class="list-line-link">
+                {{ m.role }} – {{ m.title }}
             </a>
-{% endfor %}
+        </li>
+    {% endfor %}
 </ul>
 
 <p><a href="/people/">Voltar à lista de pessoas</a></p>

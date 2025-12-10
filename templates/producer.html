@@ -15,18 +15,17 @@
 
     <h2>Movie list</h2>
 
-    <ul>
-    {% for m in movies %}
-        <li>
-            <a href="/shows/{{ m.show_id }}/">
-                {{ m.show_id }} - {{ m.title }}
-            </a>
-        </li>
-    {% endfor %}
+    <ul class="list-line">
+        {% for m in movies %}
+            <li>
+                <a href="/shows/{{ m.show_id }}/" class="list-line-link">
+                    {{ m.show_id }} - {{ m.title }}
+                </a>
+            </li>
+        {% endfor %}
     </ul>
 
     <p><a href="/production-companies/">Back to production companies</a></p>
     <p><a href="/">Back to home page</a></p>
-
 </body>
 </html>
