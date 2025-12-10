@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pessoas com Múltiplos Papéis</title>
+</head>
+<body>
+    <h1>Shows onde uma pessoa teve dois papéis diferentes</h1>
+
+    <table border="1">
+        <tr>
+            <th>Show</th>
+            <th>Pessoa</th>
+        </tr>
+
+        {% for row in results %}
+        <tr>
+            <td>{{ row.title }}</td>
+            <td>{{ row.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

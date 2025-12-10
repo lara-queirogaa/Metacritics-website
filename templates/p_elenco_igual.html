@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Elenco Principal Igual</title>
+</head>
+<body>
+    <h1>Shows com o Mesmo Elenco Principal</h1>
+
+    <table border="1">
+        <tr>
+            <th>Show 1</th>
+            <th>Ano</th>
+            <th>Show 2</th>
+            <th>Ano</th>
+        </tr>
+
+        {% for row in results %}
+        <tr>
+            <td>{{ row.show_1_title }}</td>
+            <td>{{ row.show_1_year }}</td>
+            <td>{{ row.show_2_title }}</td>
+            <td>{{ row.show_2_year }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

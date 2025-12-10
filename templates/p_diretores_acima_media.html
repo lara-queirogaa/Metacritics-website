@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diretores Acima da Média</title>
+</head>
+<body>
+    <h1>Diretores com Média de Rating Acima da Média Geral (e +5 shows)</h1>
+
+    <table border="1">
+        <tr>
+            <th>Nome</th>
+            <th>Total de Shows</th>
+            <th>Média do Diretor</th>
+        </tr>
+
+        {% for row in results %}
+        <tr>
+            <td>{{ row.name }}</td>
+            <td>{{ row.total_shows_directed }}</td>
+            <td>{{ row.director_average_rating | round(2) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

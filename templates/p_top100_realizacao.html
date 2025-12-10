@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Top 100 por Envolvimento</title>
+</head>
+<body>
+    <h1>Top 100 Shows com Mais Pessoas Envolvidas (Diretor + Escritor + Criador)</h1>
+
+    <table border="1">
+        <tr>
+            <th>Título</th>
+            <th>Total Pessoas</th>
+        </tr>
+
+        {% for row in results %}
+        <tr>
+            <td>{{ row.title }}</td>
+            <td>{{ row.total_people }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
