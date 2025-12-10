@@ -1,28 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Top 10 — Maior diferença percentual entre metascore e userscore</h1>
+<h1>Percentage histogram of movies by metascore range</h1>
 
 <table class="styled-table">
     <thead>
         <tr>
-            <th>Título</th>
-            <th>Metascore</th>
-            <th>Userscore</th>
-            <th>Diferença (%)</th>
+            <th>Metascore Range</th>
+            <th>Percentage (%)</th>
         </tr>
     </thead>
     <tbody>
         {% for row in p3 %}
         <tr>
-            <td>{{ row.title }}</td>
-            <td>{{ row.metascore }}</td>
-            <td>{{ row.userscore_scaled }}</td>
-            <td>{{ row.score_difference_percentage|round(2) }}</td>
+            <td>{{ row.interval }}</td>
+            <td>{{ row.percent }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<p><a href="/faq/">Back to FAQ</a></p>
+
 {% endblock %}

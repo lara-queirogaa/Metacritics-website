@@ -259,16 +259,19 @@ def person_movies(id):
 @APP.route('/faq/')
 def list_questions():
     questions = [
-        ("p1", "Maior metascore por género"),
-        ("p2", "Maior userscore por género"),
-        ("p3", "Top 10 maior diferença percentual meta vs user"),
-        ("p4", "Top 20 maior diferença absoluta meta vs user"),
-        ("p5", "Diretores com mais de 5 shows e rating acima da média geral"),
-        ("p6", "Pessoa mais envolvida em cult-shows"),
-        ("p7", "Shows com mesmo elenco principal em anos diferentes"),
-        ("p8", "Shows onde uma pessoa teve papéis diferentes"),
-        ("p9", "Top 100 shows com mais pessoas na produção"),
-        ("p10","Bottom 100 shows com menos pessoas na produção"),
+        ("p1", "Highest metascore by genre"),
+        ("p2", "Highest userscore by genre"),
+        ("p3", "Percentage histogram of movies by metascore range"),
+        ("p4", "Top 20 largest absolute difference meta vs user"),
+        ("p5", "Show with highest metascore each year"),
+        ("p6", "Shows with metascore higher than the average of their genre"),
+        ("p7", "Shows with the same main cast in different years"),
+        ("p8", "Shows where a person had different roles"),
+        ("p9", "Top 100 shows with most people in production"),
+        ("p10","Bottom 100 shows with least people in production"),
+        ("p11","Top 5 Genres with Most Movies"),
+        ("p12","Genre with Highest Metascore by Decade"),
+        ("p13","Genre with Highest Userscore by Decade"),
     ]
     return render_template("faq.html", questions=questions)
 
@@ -335,27 +338,30 @@ def pergunta2():
 
 
 # --------------------------
-# p3 — Top 10 maior diferença percentual
+# p3 — histograma percentual de filmes por faixa de metascore
 # --------------------------
 @APP.route('/faq/p3/')
 def pergunta3():
     p3 = db.execute("""
+        WITH Total AS (
+            SELECT COUNT(*) AS total_filmes
+            FROM metascore
+        ),
+        Buckets AS (
+            SELECT 
+                (metascore / 20) * 20 AS bucket_start,
+                COUNT(*) AS total_in_bucket
+            FROM metascore
+            GROUP BY bucket_start
+        )
         SELECT
-            s.title,
-            ms.metascore,
-            us.userscore * 10 AS userscore_scaled,
-            ABS(CAST(ms.metascore AS REAL) - (us.userscore * 10)) / (us.userscore * 10) * 100 AS score_difference_percentage
-        FROM shows s
-        JOIN metascore ms ON s.show_id = ms.show_id
-        JOIN userscore us ON s.show_id = us.show_id
-        WHERE us.userscore_count >= 50
-          AND ms.metascore_count >= 10
-          AND (us.userscore * 10) > 0
-        ORDER BY score_difference_percentage DESC
-        LIMIT 10;
+            bucket_start || '-' || (bucket_start + 19) AS interval,
+            ROUND((CAST(total_in_bucket AS REAL) / (SELECT total_filmes FROM Total)) * 100, 2) AS percent
+        FROM Buckets
+        ORDER BY bucket_start;
     """).fetchall()
-
     return render_template("p3.html", p3=p3)
+
 
 
 # --------------------------
@@ -377,60 +383,66 @@ def pergunta4():
 
 
 # --------------------------
-# p5 — Diretores com >5 shows e rating acima da média geral
+# p5 — Filme com maior metascore em cada ano
 # --------------------------
 @APP.route('/faq/p5/')
-def pergunta5():
+def p5():
     p5 = db.execute("""
-        SELECT p.name,
-               COUNT(s.show_id) AS total_shows_directed,
-               AVG(s.rating) AS director_average_rating
-        FROM people p
-        JOIN directors d ON p.person_id = d.person_id
-        JOIN shows s ON d.show_id = s.show_id
-        GROUP BY p.person_id, p.name
-        HAVING COUNT(s.show_id) > 5
-           AND AVG(s.rating) > (SELECT AVG(rating) FROM shows WHERE rating IS NOT NULL)
-        ORDER BY director_average_rating DESC;
+        WITH MaxMetascorePerYear AS (
+        SELECT substr(s.releaseDate,1,4) AS year,
+            MAX(m.metascore) AS max_metascore
+        FROM shows s
+        JOIN metascore m ON s.show_id = m.show_id
+        WHERE m.metascore IS NOT NULL
+        GROUP BY year
+        )
+        SELECT s.title, s.releaseDate, substr(s.releaseDate,1,4) AS year, m.metascore
+        FROM MaxMetascorePerYear mm
+        JOIN shows s ON substr(s.releaseDate,1,4) = mm.year
+        JOIN metascore m ON s.show_id = m.show_id
+        WHERE m.metascore = mm.max_metascore
+        AND s.show_id = (
+            SELECT MIN(s2.show_id)
+            FROM shows s2
+            JOIN metascore m2 ON s2.show_id = m2.show_id
+            WHERE substr(s2.releaseDate,1,4) = mm.year
+            AND m2.metascore = mm.max_metascore
+        )
+        ORDER BY year;
     """).fetchall()
+    return render_template('p5.html', p5=p5)
 
-    return render_template("p5.html", p5=p5)
 
 
 # --------------------------
-# p6 — Pessoa mais envolvida em cult-shows
+# p6 — Filmes com metascore maior que a média do seu género
 # --------------------------
 @APP.route('/faq/p6/')
 def pergunta6():
     p6 = db.execute("""
-        WITH CultShows AS (
-            SELECT s.show_id
-            FROM shows s
-            JOIN userscore us ON s.show_id = us.show_id
-            JOIN metascore ms ON s.show_id = ms.show_id
-            WHERE us.userscore > 9.0
-              AND ms.metascore < 60
-        ),
-        AllInvolvements AS (
-            SELECT person_id, show_id FROM directors
-            UNION ALL
-            SELECT person_id, show_id FROM writers
-            UNION ALL
-            SELECT person_id, show_id FROM top_cast
-            UNION ALL
-            SELECT person_id, show_id FROM creators
+        SELECT 
+            s.title AS title,
+            g.name AS genre,
+            m.metascore AS metascore
+        FROM shows s
+        JOIN metascore m ON s.show_id = m.show_id
+        JOIN types t ON s.show_id = t.show_id
+        JOIN genres g ON t.genre_id = g.genre_id
+        WHERE m.metascore IS NOT NULL
+        AND m.metascore > (
+            SELECT AVG(m2.metascore)
+            FROM shows s2
+            JOIN metascore m2 ON s2.show_id = m2.show_id
+            JOIN types t2 ON s2.show_id = t2.show_id
+            WHERE t2.genre_id = g.genre_id
         )
-        SELECT p.name,
-               COUNT(ai.show_id) AS cult_show_count
-        FROM people p
-        JOIN AllInvolvements ai ON p.person_id = ai.person_id
-        JOIN CultShows cs ON ai.show_id = cs.show_id
-        GROUP BY p.person_id, p.name
-        ORDER BY cult_show_count DESC
-        LIMIT 1;
+        ORDER BY g.name, m.metascore DESC;
+
     """).fetchall()
 
     return render_template("p6.html", p6=p6)
+
+
 
 
 # --------------------------
@@ -538,3 +550,111 @@ def pergunta10():
     """).fetchall()
 
     return render_template("p10.html", p10=p10)
+
+
+# --------------------------
+# p11 — Top 5 Gêneros com Mais Filmes
+# --------------------------
+
+@APP.route('/faq/p11/')
+def pergunta11():
+    p11 = db.execute("""
+        SELECT 
+            g.name AS genre,
+            COUNT(t.show_id) AS total_movies
+        FROM genres g
+        JOIN types t ON g.genre_id = t.genre_id
+        GROUP BY g.genre_id
+        ORDER BY total_movies DESC
+        LIMIT 5;
+    """).fetchall()
+    return render_template("p11.html", p11=p11)
+
+# --------------------------
+# p12 — Gênero com Maior Metascore por Década
+# --------------------------
+
+
+@APP.route('/faq/p12/')
+def pergunta12():
+    p12 = db.execute("""
+        WITH MetaPerDecade AS (
+            SELECT 
+                (CAST(substr(s.releaseDate,1,4) AS INTEGER) / 10) * 10 AS decade,
+                g.genre_id,
+                g.name AS genre,
+                MAX(m.metascore) AS max_metascore,
+                COUNT(*) AS film_count
+            FROM shows s
+            JOIN types t ON s.show_id = t.show_id
+            JOIN genres g ON t.genre_id = g.genre_id
+            JOIN metascore m ON s.show_id = m.show_id
+            WHERE releaseDate IS NOT NULL
+            AND length(releaseDate) >= 4
+            AND substr(releaseDate,1,4) GLOB '[0-9][0-9][0-9][0-9]'
+            GROUP BY decade, g.genre_id
+        ),
+        Ranked AS (
+            SELECT 
+                decade,
+                genre,
+                max_metascore,
+                film_count,
+                ROW_NUMBER() OVER (
+                    PARTITION BY decade
+                    ORDER BY max_metascore DESC, film_count DESC, genre_id ASC
+                ) AS rn
+            FROM MetaPerDecade
+        )
+        SELECT decade, genre, max_metascore
+        FROM Ranked
+        WHERE rn = 1
+        ORDER BY decade;
+    """).fetchall()
+    return render_template("p12.html", p12=p12)
+
+# --------------------------
+# p13 — Gênero com Maior Userscore por Década
+# --------------------------
+
+@APP.route('/faq/p13/')
+def pergunta13():
+    p13 = db.execute("""
+        WITH UserPerDecade AS (
+            SELECT 
+                (CAST(substr(s.releaseDate,1,4) AS INTEGER) / 10) * 10 AS decade,
+                g.genre_id,
+                g.name AS genre,
+                MAX(u.userscore) AS max_userscore,
+                COUNT(*) AS film_count
+            FROM shows s
+            JOIN types t ON s.show_id = t.show_id
+            JOIN genres g ON t.genre_id = g.genre_id
+            JOIN userscore u ON s.show_id = u.show_id
+            WHERE releaseDate IS NOT NULL
+              AND length(releaseDate) >= 4
+              AND substr(releaseDate,1,4) GLOB '[0-9][0-9][0-9][0-9]'
+            GROUP BY decade, g.genre_id
+        ),
+        Ranked AS (
+            SELECT 
+                decade,
+                genre,
+                max_userscore,
+                film_count,
+                ROW_NUMBER() OVER (
+                    PARTITION BY decade
+                    ORDER BY max_userscore DESC, film_count DESC, genre_id ASC
+                ) AS rn
+            FROM UserPerDecade
+        )
+        SELECT decade, genre, max_userscore
+        FROM Ranked
+        WHERE rn = 1
+        ORDER BY decade;
+    """).fetchall()
+    
+    return render_template("p13.html", p13=p13)
+
+
+

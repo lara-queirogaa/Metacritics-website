@@ -1,26 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Diretores com >5 shows e rating acima da média geral</h1>
+<h1>Show with highest metascore each year</h1>
 
 <table class="styled-table">
     <thead>
         <tr>
-            <th>Nome</th>
-            <th>Total Shows</th>
-            <th>Média Rating</th>
+            <th>Year</th>
+            <th>Title</th>
+            <th>Release Date</th>
         </tr>
     </thead>
     <tbody>
         {% for row in p5 %}
         <tr>
-            <td>{{ row.name }}</td>
-            <td>{{ row.total_shows_directed }}</td>
-            <td>{{ row.director_average_rating|round(2) }}</td>
+            <td>{{ row.year }}</td>
+            <td>{{ row.title }}</td>
+            <td>{{ row.releaseDate }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
-<p><a href="/faq/">Back to FAQ</a></p>
 {% endblock %}

@@ -1,25 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Shows with metascore higher than the average of their genre</h1>
+<h1>Genre with Highest Userscore by Decade</h1>
 
 <table class="styled-table">
     <thead>
         <tr>
-            <th>Shows</th>
+            <th>Decade</th>
             <th>Genre</th>
-            <th>Metascore</th>
+            <th>Max Userscore</th>
         </tr>
     </thead>
     <tbody>
-        {% for row in p6 %}
+        {% for row in p13 %}
         <tr>
-            <td>{{ row.title }}</td>
+            <td>{{ row.decade }}</td>
             <td>{{ row.genre }}</td>
-            <td>{{ row.metascore }}</td>
+            <td>{{ row.max_userscore }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
 {% endblock %}
