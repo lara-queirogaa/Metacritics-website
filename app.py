@@ -117,7 +117,7 @@ def list_genres():
     genres = db.execute('''
         SELECT genre_id, name
         FROM genres
-        ORDER BY genre_id
+        ORDER BY name
     ''').fetchall()
     return render_template('genre-list.html', genres=genres)
 
@@ -152,7 +152,7 @@ def list_producers():
     companies = db.execute('''
         SELECT producer_id, name
         FROM companies
-        ORDER BY producer_id
+        ORDER BY name
     ''').fetchall()
     return render_template('production-companies.html', companies=companies)
 
