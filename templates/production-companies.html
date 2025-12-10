@@ -8,11 +8,12 @@
 <body>
     <h1>Production Companies</h1>
 
-    <ul>
+    <ul class="list-line">
         {% for company in companies %}
             <li>
-                {{ company.producer_id }} - 
-                <a href="/production-companies/{{ company.producer_id }}/">{{ company.name }}</a>
+                <a href="/production-companies/{{ company.producer_id }}/" class="list-line-link">
+                    {{ company.name }}
+                </a>
             </li>
         {% endfor %}
     </ul>

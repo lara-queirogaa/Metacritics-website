@@ -8,11 +8,12 @@
 <body>
     <h1>Genre List</h1>
 
-    <ul>
+    <ul class="list-line">
         {% for genre in genres %}
             <li>
-                {{ genre.genre_id }} - 
-                <a href="/genres/{{ genre.genre_id }}/">{{ genre.name }}</a>
+                <a href="/genres/{{ genre.genre_id }}/" class="list-line-link">
+                    {{ genre.name }}
+                </a>
             </li>
         {% endfor %}
     </ul>

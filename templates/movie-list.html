@@ -11,8 +11,9 @@
     <ul class="list-line">
         {% for movie in movies %}
             <li>
-                {{ movie.show_id }} - 
-                <a href="/shows/{{ movie.show_id }}/">{{ movie.title }}</a>
+                <a href="/shows/{{ movie.show_id }}/" class="list-line-link">
+                    {{ movie.show_id }} - {{ movie.title }}
+                </a>
             </li>
         {% endfor %}
     </ul>
@@ -20,4 +21,3 @@
     <p><a href="/">Back to home page</a></p>
 </body>
 </html>
-
