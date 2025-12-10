@@ -53,7 +53,7 @@ def get_movie(id):
 
     # Obter atores do filme
     actors = db.execute('''
-        SELECT name
+        SELECT name, person_id
         FROM top_cast 
         NATURAL JOIN people
         WHERE show_id = ?
@@ -66,11 +66,48 @@ def get_movie(id):
         WHERE show_id = ?                  
     ''', [id]).fetchall()
 
+    # Obter creators
+    creators = db.execute('''
+        SELECT name, person_id
+        FROM creators
+        NATURAL JOIN people
+        WHERE show_id = ?
+    ''', [id]).fetchall()
+
+    # Obter writers
+    writers = db.execute('''
+        SELECT name, person_id
+        FROM writers
+        NATURAL JOIN people
+        WHERE show_id = ?
+    ''', [id]).fetchall()
+
+    # Obter directors
+    directors = db.execute('''
+        SELECT name, person_id
+        FROM directors
+        NATURAL JOIN people
+        WHERE show_id = ?
+    ''', [id]).fetchall()
+
+    # Obter production companies (producers)
+    producers = db.execute('''
+        SELECT name, producer_id
+        FROM production
+        NATURAL JOIN companies
+        WHERE show_id = ?
+    ''', [id]).fetchall()
+
+
     return render_template('movie.html',
-                           movie=movie,
-                           genres=genres,
-                           actors=actors,
-                           scores = scores)
+                           movie = movie,
+                           genres = genres,
+                           actors = actors,
+                           scores = scores,
+                           creators = creators,
+                           writers = writers,
+                           directors = directors,
+                           producers = producers)
 
 # Genres
 @APP.route('/genres/')

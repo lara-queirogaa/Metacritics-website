@@ -188,6 +188,39 @@ table tr:hover td {
   font-family: 'Oswald', sans-serif;
 }
 
+/* --- Linha de Lista Estilo “Tabela” --- */
+.list-line {
+  list-style-type: none;      /* Remove bullets */
+  padding: 0;
+  margin: 0 0 1em 0;
+  width: 100%;
+}
+
+.list-line li {
+  background-color: #1a1a1a; /* Fundo escuro para cada linha */
+  color: #dcdcdc;             /* Texto claro */
+  padding: 10px 15px;         /* Espaçamento interno */
+  border-bottom: 1px solid #333; /* Linha separadora */
+  font-family: 'Lato', sans-serif;
+  transition: background-color 0.2s ease;
+}
+
+.list-line li:hover {
+  background-color: #2a2a2a; /* Hover mais claro */
+}
+
+.list-line li a {
+  color: #ff4d4d;
+  text-decoration: none;
+  border-bottom: 1px dotted #ff4d4d;
+}
+
+.list-line li a:hover {
+  color: #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+
 /* --- Responsividade e Impressão --- */
 
 @media only screen and (min-width: 480px) {
