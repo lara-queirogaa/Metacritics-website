@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ - Queries</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>FAQ - Queries SQL</h1>
+
+    <ul class="list-line">
+        {% for q_id, q_title in questions %}
+            <li>
+                <a href="/faq/{{ q_id }}/" class="list-line-link">
+                    {{ loop.index }} - {{ q_title }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <p><a href="/">Back to home page</a></p>
+</body>
+</html>

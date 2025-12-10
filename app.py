@@ -426,17 +426,18 @@ def pergunta6():
 def pergunta7():
     p7 = db.execute("""
         WITH PrincipalCast AS (
-            SELECT
-                show_id,
-                GROUP_CONCAT(person_id ORDER BY person_id ASC) AS principal_cast_list
-            FROM (
-                SELECT show_id, person_id,
-                       ROW_NUMBER() OVER(PARTITION BY show_id ORDER BY person_id ASC) AS rn
-                FROM top_cast
+            SELECT t.show_id,
+                   GROUP_CONCAT(t.person_id, ',') AS principal_cast_list
+            FROM top_cast t
+            WHERE t.person_id IN (
+                SELECT person_id
+                FROM top_cast t2
+                WHERE t2.show_id = t.show_id
+                ORDER BY person_id ASC
+                LIMIT 5
             )
-            WHERE rn <= 5
-            GROUP BY show_id
-            HAVING COUNT(person_id) = 5
+            GROUP BY t.show_id
+            HAVING COUNT(*) = 5
         )
         SELECT
             s1.title AS show_1_title,
@@ -453,6 +454,7 @@ def pergunta7():
     """).fetchall()
 
     return render_template("p7.html", p7=p7)
+
 
 
 # --------------------------

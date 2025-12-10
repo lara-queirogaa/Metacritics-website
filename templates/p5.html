@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Diretores com mais de 5 shows</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        table { border-collapse: collapse; width: 80%; margin: 20px 0; }
+        th, td { border: 1px solid #999; padding: 8px 12px; text-align: left; }
+        th { background-color: #eee; }
+    </style>
+</head>
+<body>
+    <h1>Diretores com >5 shows e rating acima da média geral</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Total Shows</th>
+                <th>Média Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in p5 %}
+            <tr>
+                <td>{{ row.name }}</td>
+                <td>{{ row.total_shows_directed }}</td>
+                <td>{{ row.director_average_rating|round(2) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><a href="/faq/">Back to FAQ</a></p>
+</body>
+</html>

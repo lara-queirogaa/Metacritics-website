@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Top 20 Maior Diferença Absoluta</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        table { border-collapse: collapse; width: 80%; margin: 20px 0; }
+        th, td { border: 1px solid #999; padding: 8px 12px; text-align: left; }
+        th { background-color: #eee; }
+    </style>
+</head>
+<body>
+    <h1>Top 20 — Maior diferença absoluta entre metascore e userscore</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Diferença</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in p4 %}
+            <tr>
+                <td>{{ row.title }}</td>
+                <td>{{ row.diferenca }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><a href="/faq/">Back to FAQ</a></p>
+</body>
+</html>
