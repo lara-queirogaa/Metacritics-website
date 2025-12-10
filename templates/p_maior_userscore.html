@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Maior UserScore por Género</title>
+</head>
+<body>
+    <h1>Maior UserScore por Género</h1>
+
+    <table border="1">
+        <tr>
+            <th>Género</th>
+            <th>Título</th>
+            <th>UserScore</th>
+            <th>Número de Reviews</th>
+        </tr>
+
+        {% for row in results %}
+        <tr>
+            <td>{{ row.name }}</td>
+            <td><a href="/shows/{{ row.show_id }}/">{{ row.title }}</a></td>
+            <td>{{ row.userscore }}</td>
+            <td>{{ row.userscore_count }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
