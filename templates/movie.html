@@ -39,14 +39,81 @@
 
     <h2>Main actors</h2>
     {% if actors %}
-        <ul>
-        {% for a in actors %}
-            <li>{{ a.name }}</li>
-        {% endfor %}
-        </ul>
+        <p>
+            <ul>
+            {% for a in actors %}
+                <li><a href="/person/{{ a.person_id }}/">{{ a.name }}</a>{% if not loop.last %}, {% endif %}</li>
+            {% endfor %}
+            </ul>
+        </p>
     {% else %}
         <p>No actors in dataset</p>
     {% endif %}
+
+    <h2>Production Team</h2>
+
+    <table border="1" style="border-collapse: collapse; width: 80%;">
+        <tr>
+            <th>Creators</th>
+            <th>Writers</th>
+            <th>Directors</th>
+            <th>Producers</th>
+        </tr>
+        <tr>
+            <!-- Creators -->
+            <td>
+                {% if creators %}
+                    <ul>
+                    {% for c in creators %}
+                        <li><a href="/person/{{ c.person_id }}/">{{ c.name }}</a></li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    None
+                {% endif %}
+            </td>
+
+            <!-- Writers -->
+            <td>
+                {% if writers %}
+                    <ul>
+                    {% for w in writers %}
+                        <li><a href="/person/{{ w.person_id }}/">{{ w.name }}</a></li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    None
+                {% endif %}
+            </td>
+
+            <!-- Directors -->
+            <td>
+                {% if directors %}
+                    <ul>
+                    {% for d in directors %}
+                        <li><a href="/person/{{ d.person_id }}/">{{ d.name }}</a></li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    None
+                {% endif %}
+            </td>
+
+            <!-- Producers -->
+            <td>
+                {% if producers %}
+                    <ul>
+                    {% for p in producers %}
+                        <li><a href="/production-companies/{{ p.producer_id }}/">{{ p.name }}</a></li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    No producers
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
 
     <h2>Scores</h2>
     {% if scores %}
