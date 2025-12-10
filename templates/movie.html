@@ -44,59 +44,42 @@
 {% endif %}
 
 <h2>Production Team</h2>
-<table border="1">
-    <tr>
-        <th>Creators</th>
-        <th>Writers</th>
-        <th>Directors</th>
-        <th>Producers</th>
-    </tr>
-    <tr>
-        <td>
-            {% if creators %}
-                <ul>
-                {% for c in creators %}
-                    <li><a href="/person/{{ c.person_id }}/">{{ c.name }}</a></li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                None
-            {% endif %}
-        </td>
-        <td>
-            {% if writers %}
-                <ul>
-                {% for w in writers %}
-                    <li><a href="/person/{{ w.person_id }}/">{{ w.name }}</a></li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                None
-            {% endif %}
-        </td>
-        <td>
-            {% if directors %}
-                <ul>
-                {% for d in directors %}
-                    <li><a href="/person/{{ d.person_id }}/">{{ d.name }}</a></li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                None
-            {% endif %}
-        </td>
-        <td>
-            {% if producers %}
-                <ul>
-                {% for p in producers %}
-                    <li><a href="/production-companies/{{ p.producer_id }}/">{{ p.name }}</a></li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                No producers
-            {% endif %}
-        </td>
-    </tr>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in creators %}
+        <tr>
+            <td><a href="/person/{{ c.person_id }}/">{{ c.name }}</a></td>
+            <td>Creator</td>
+        </tr>
+        {% endfor %}
+
+        {% for w in writers %}
+        <tr>
+            <td><a href="/person/{{ w.person_id }}/">{{ w.name }}</a></td>
+            <td>Writer</td>
+        </tr>
+        {% endfor %}
+
+        {% for d in directors %}
+        <tr>
+            <td><a href="/person/{{ d.person_id }}/">{{ d.name }}</a></td>
+            <td>Director</td>
+        </tr>
+        {% endfor %}
+
+        {% for p in producers %}
+        <tr>
+            <td><a href="/production-companies/{{ p.producer_id }}/">{{ p.name }}</a></td>
+            <td>Producer</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 
 <h2>Scores</h2>
@@ -111,3 +94,4 @@
 <p>No scores available</p>
 {% endif %}
 {% endblock %}
+

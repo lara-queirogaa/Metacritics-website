@@ -4,6 +4,11 @@
 {% block content %}
 <h1>Genre List</h1>
 
+<form method="get" action="/genres/" style="margin-bottom: 1em;">
+    <input type="text" name="search" placeholder="Search genre..." value="{{ request.args.get('search','') }}">
+    <button type="submit">Search</button>
+</form>
+
 <ul class="list-line">
     {% for genre in genres %}
         <li>
@@ -13,4 +18,23 @@
         </li>
     {% endfor %}
 </ul>
+
+<!-- Paginação -->
+{% if total_pages > 1 %}
+<div style="text-align: center; margin-top: 1em;">
+    {% if page > 1 %}
+        <a href="?page={{ page - 1 }}&search={{ request.args.get('search','') }}">« Previous</a>
+    {% endif %}
+    {% for p_num in range(1, total_pages + 1) %}
+        {% if p_num == page %}
+            <strong>{{ p_num }}</strong>
+        {% else %}
+            <a href="?page={{ p_num }}&search={{ request.args.get('search','') }}">{{ p_num }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if page < total_pages %}
+        <a href="?page={{ page + 1 }}&search={{ request.args.get('search','') }}">Next »</a>
+    {% endif %}
+</div>
+{% endif %}
 {% endblock %}

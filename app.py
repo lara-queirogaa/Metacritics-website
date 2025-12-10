@@ -1,36 +1,45 @@
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
-from flask import render_template, Flask, abort, g
+from flask import render_template, Flask, abort, g, request
 import logging
 import db
 import sqlite3
-
+from math import ceil
 
 APP = Flask(__name__)
 
-# Start page (mudar as stats que qeuro que aparceçam aqui)
+# Start page
 @APP.route('/')
 def index():
-    #ola
     stats = db.execute('''
         SELECT * FROM
         (SELECT COUNT(*) n_movies FROM shows)
         JOIN (SELECT COUNT(*) n_people FROM people)
         JOIN (SELECT COUNT(*) n_genres FROM genres)
         JOIN (SELECT COUNT(*) n_production_companies FROM companies)
-                       ''').fetchone()
+    ''').fetchone()
     logging.info(stats)
-    return render_template('index.html',stats = stats)
+    return render_template('index.html', stats=stats)
 
 # Filmes 
 @APP.route('/shows/')
 def list_movies():
-    movies = db.execute('''
+    page = int(request.args.get('page', 1))
+    search = request.args.get('search', '').lower()
+
+    all_movies = db.execute('''
         SELECT show_id, title
-        FROM shows 
+        FROM shows
         ORDER BY title
     ''').fetchall()
-    return render_template('movie-list.html', movies=movies)
+
+    filtered_movies = [m for m in all_movies if search in m['title'].lower()]
+
+    items_per_page = 100
+    total_pages = ceil(len(filtered_movies) / items_per_page)
+    movies = filtered_movies[(page-1)*items_per_page : page*items_per_page]
+
+    return render_template('movie-list.html', movies=movies, page=page, total_pages=total_pages, search=search)
 
 # Cada filme individual 
 @APP.route('/shows/<int:id>/')
@@ -44,16 +53,14 @@ def get_movie(id):
     if movie is None:
         abort(404, 'Show id {} não existe.'.format(id))
 
-    # Obter géneros do filme
     genres = db.execute('''
         SELECT g.name
         FROM types 
         NATURAL JOIN genres g
         WHERE show_id = ?
-        order by g.name
+        ORDER BY g.name
     ''', [id]).fetchall()
 
-    # Obter atores do filme
     actors = db.execute('''
         SELECT name, person_id
         FROM top_cast 
@@ -68,7 +75,6 @@ def get_movie(id):
         WHERE show_id = ?                  
     ''', [id]).fetchall()
 
-    # Obter creators
     creators = db.execute('''
         SELECT name, person_id
         FROM creators
@@ -76,7 +82,6 @@ def get_movie(id):
         WHERE show_id = ?
     ''', [id]).fetchall()
 
-    # Obter writers
     writers = db.execute('''
         SELECT name, person_id
         FROM writers
@@ -84,7 +89,6 @@ def get_movie(id):
         WHERE show_id = ?
     ''', [id]).fetchall()
 
-    # Obter directors
     directors = db.execute('''
         SELECT name, person_id
         FROM directors
@@ -92,7 +96,6 @@ def get_movie(id):
         WHERE show_id = ?
     ''', [id]).fetchall()
 
-    # Obter production companies (producers)
     producers = db.execute('''
         SELECT name, producer_id
         FROM production
@@ -100,29 +103,36 @@ def get_movie(id):
         WHERE show_id = ?
     ''', [id]).fetchall()
 
-
     return render_template('movie.html',
-                           movie = movie,
-                           genres = genres,
-                           actors = actors,
-                           scores = scores,
-                           creators = creators,
-                           writers = writers,
-                           directors = directors,
-                           producers = producers)
+                           movie=movie,
+                           genres=genres,
+                           actors=actors,
+                           scores=scores,
+                           creators=creators,
+                           writers=writers,
+                           directors=directors,
+                           producers=producers)
 
 # Genres
 @APP.route('/genres/')
 def list_genres():
-    genres = db.execute('''
+    page = int(request.args.get('page', 1))
+    search = request.args.get('search', '').lower()
+
+    all_genres = db.execute('''
         SELECT genre_id, name
         FROM genres
         ORDER BY name
     ''').fetchall()
-    return render_template('genre-list.html', genres=genres)
 
+    filtered_genres = [g for g in all_genres if search in g['name'].lower()]
 
-# cada genre
+    items_per_page = 100
+    total_pages = ceil(len(filtered_genres) / items_per_page)
+    genres = filtered_genres[(page-1)*items_per_page : page*items_per_page]
+
+    return render_template('genre-list.html', genres=genres, page=page, total_pages=total_pages, search=search)
+
 @APP.route('/genres/<int:id>/')
 def get_genre(id):
     info = db.execute('''
@@ -142,22 +152,28 @@ def get_genre(id):
         ORDER BY title
     ''', [id]).fetchall()
 
-    return render_template('genre.html',
-                           info=info,
-                           movies=movies)
+    return render_template('genre.html', info=info, movies=movies)
 
-# Production
+# Production companies
 @APP.route('/production-companies/')
 def list_producers():
-    companies = db.execute('''
+    page = int(request.args.get('page', 1))
+    search = request.args.get('search', '').lower()
+
+    all_companies = db.execute('''
         SELECT producer_id, name
         FROM companies
         ORDER BY name
     ''').fetchall()
-    return render_template('production-companies.html', companies=companies)
 
+    filtered_companies = [c for c in all_companies if search in c['name'].lower()]
 
-# cada producer
+    items_per_page = 100
+    total_pages = ceil(len(filtered_companies) / items_per_page)
+    companies = filtered_companies[(page-1)*items_per_page : page*items_per_page]
+
+    return render_template('production-companies.html', companies=companies, page=page, total_pages=total_pages, search=search)
+
 @APP.route('/production-companies/<int:id>/')
 def get_producer(id):
     info = db.execute('''
@@ -165,7 +181,7 @@ def get_producer(id):
         FROM companies
         NATURAL JOIN production
         WHERE producer_id = ?
-        order by name
+        ORDER BY name
     ''', [id]).fetchone()
 
     movies = db.execute('''
@@ -177,20 +193,20 @@ def get_producer(id):
         ORDER BY title
     ''', [id]).fetchall()
 
-    return render_template('producer.html',
-                           info=info,
-                           movies=movies)
+    return render_template('producer.html', info=info, movies=movies)
 
 # People
 @APP.route('/people/')
 def list_people():
-    people = db.execute('''
+    page = int(request.args.get('page', 1))
+    search = request.args.get('search', '').lower()
+
+    all_people = db.execute('''
         SELECT 
             p.person_id,
             p.name,
             REPLACE(GROUP_CONCAT(DISTINCT r.role), ',', ', ') AS roles
         FROM people p
-
         LEFT JOIN (
             SELECT DISTINCT person_id, 'actor' AS role FROM top_cast
             UNION 
@@ -199,16 +215,19 @@ def list_people():
             SELECT DISTINCT person_id, 'creator' AS role FROM creators
             UNION 
             SELECT DISTINCT person_id, 'writer' AS role FROM writers
-        ) r
-        ON p.person_id = r.person_id
-
+        ) r ON p.person_id = r.person_id
         GROUP BY p.person_id, p.name
         ORDER BY p.name;
     ''').fetchall()
 
-    return render_template('people-list.html', people=people)
+    filtered_people = [p for p in all_people if search in p['name'].lower()]
 
-# each person
+    items_per_page = 100
+    total_pages = ceil(len(filtered_people) / items_per_page)
+    people = filtered_people[(page-1)*items_per_page : page*items_per_page]
+
+    return render_template('people-list.html', people=people, page=page, total_pages=total_pages, search=search)
+
 @APP.route('/person/<int:id>/')
 def person_movies(id):
     person = db.execute("""
@@ -236,10 +255,7 @@ def person_movies(id):
 
     return render_template("person.html", person=person, movies=movies)
 
-
-# --------------------------
-# FAQ HOME
-# --------------------------
+# FAQ e perguntas 
 @APP.route('/faq/')
 def list_questions():
     questions = [
@@ -254,9 +270,7 @@ def list_questions():
         ("p9", "Top 100 shows com mais pessoas na produção"),
         ("p10","Bottom 100 shows com menos pessoas na produção"),
     ]
-
     return render_template("faq.html", questions=questions)
-
 
 # --------------------------
 # p1 — Maior metascore por género
