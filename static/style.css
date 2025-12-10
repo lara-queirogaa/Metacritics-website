@@ -238,6 +238,80 @@ table tr:hover td {
   font-family: 'Oswald', sans-serif;
 }
 
+/* === HEADER BRANCO ARREDONDADO === */
+.main-header {
+    background: #ffffff;
+    text-align: center;
+    margin: 0 auto 0px auto;
+    border-bottom: 3px solid #ff3333;
+
+    width: 100%;
+    max-width: 900px;          /* mesma largura usada no body */
+    border-radius: 12px;       /* cantos arredondados */
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.15);
+}
+
+.main-header h1 {
+    margin: 0; 
+    font-size: 2.8em;
+    color: #ff0000;
+    font-family: 'Oswald', sans-serif;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.4);
+}
+
+
+/* === MENU FICA POR BAIXO, JÁ NO FUNDO PRETO === */
+.top-menu {
+    text-align: center;
+    background: #ff6666;
+}
+
+.top-menu a {
+    display: inline-block;
+    margin: 6px 8px;
+    padding: 7px 16px;
+    background: #ff3333;
+    color: #fff;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: 0.2s;
+    border-bottom: none;
+}
+
+.top-menu a:hover {
+    background: #ffffff;
+    color: #ff0000;
+    border: 2px solid #ff0000;
+}
+
+.header-buttons a {
+    border: 2px solid white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    color: white;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.header-buttons a:hover {
+    background-color: white;
+    color: black;
+}
+
+.header-buttons a.active {
+    background-color: white;
+    color: black;
+}
+
+/* Botão ativo do menu */
+.top-menu .active {
+    background: #ffffff !important;
+    color: #ff0000 !important;
+    border: 2px solid #ff0000 !important;
+}
+
+
 @media only screen and (min-width: 480px) {
   body { font-size: 18px; }
 }

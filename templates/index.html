@@ -1,29 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>MovieStreamApp - Home</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1>MovieStreamApp</h1>
+{% extends "base.html" %}
+{% set current_page = "home" %}
 
-    <h2>Stats</h2>
-    <ul>
-        <li>Number of movies: {{ stats.n_movies }}</li>
-        <li>Number of people: {{ stats.n_people }}</li>
-        <li>Number of genres: {{ stats.n_genres }}</li>
-        <li>Number of production companies: {{ stats.n_production_companies }}</li>
-    </ul>
-
-    <h2>Explore data</h2>
-    <ul>
-        <li><a href="/shows/">Movies</a></li>
-        <li><a href="/people/">People</a></li>
-        <li><a href="/genres/">Genres</a></li>
-        <li><a href="/production-companies/">Production companies</a></li>
-        <li><a href="/FAQ/">faq</a></li>
-    </ul>
-</body>
-</html>
-
+{% block content %}
+<h2>Stats</h2>
+<ul>
+    <li>Number of movies: {{ stats.n_movies }}</li>
+    <li>Number of people: {{ stats.n_people }}</li>
+    <li>Number of genres: {{ stats.n_genres }}</li>
+    <li>Number of production companies: {{ stats.n_production_companies }}</li>
+</ul>
+{% endblock %}

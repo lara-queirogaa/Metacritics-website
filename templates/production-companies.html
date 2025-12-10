@@ -1,24 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Production Companies</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1>Production Companies</h1>
+{% extends "base.html" %}
+{% set current_page = "production-companies" %}
 
-    <ul class="list-line">
-        {% for company in companies %}
-            <li>
-                <a href="/production-companies/{{ company.producer_id }}/" class="list-line-link">
-                    {{ company.name }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+{% block content %}
+<h1>Production Companies</h1>
 
-    <p><a href="/">Back to home page</a></p>
-</body>
-</html>
+<ul class="list-line">
+    {% for company in companies %}
+        <li>
+            <a href="/production-companies/{{ company.producer_id }}/" class="list-line-link">
+                {{ company.name }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
 

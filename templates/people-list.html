@@ -1,26 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>People</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% set current_page = "people" %}
 
-    <h1>People</h1>
-    <h2>List of People and Their Roles</h2>
+{% block content %}
+<h1>People</h1>
 
-    <ul class="list-line">
-        {% for p in people %}
-            <li>
-                <a href="/person/{{ p.person_id }}/" class="list-line-link">
-                    {{ p.name }} – {{ p.roles }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-
-    <p><a href="/">Back to home page</a></p>
-
-</body>
-</html>
+<ul class="list-line">
+    {% for p in people %}
+        <li>
+            <a href="/person/{{ p.person_id }}/" class="list-line-link">
+                {{ p.name }} – {{ p.roles }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
