@@ -237,157 +237,288 @@ def person_movies(id):
     return render_template("person.html", person=person, movies=movies)
 
 
+# --------------------------
+# FAQ HOME
+# --------------------------
+@APP.route('/faq/')
+def list_questions():
+    questions = [
+        ("p1", "Maior metascore por género"),
+        ("p2", "Maior userscore por género"),
+        ("p3", "Top 10 maior diferença percentual meta vs user"),
+        ("p4", "Top 20 maior diferença absoluta meta vs user"),
+        ("p5", "Diretores com mais de 5 shows e rating acima da média geral"),
+        ("p6", "Pessoa mais envolvida em cult-shows"),
+        ("p7", "Shows com mesmo elenco principal em anos diferentes"),
+        ("p8", "Shows onde uma pessoa teve papéis diferentes"),
+        ("p9", "Top 100 shows com mais pessoas na produção"),
+        ("p10","Bottom 100 shows com menos pessoas na produção"),
+    ]
 
-# ... (o teu código de configuração existente) ...
+    return render_template("faq.html", questions=questions)
 
-def get_db():
-    # Ajusta isto para a tua conexão de base de dados atual
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect('a_tua_base_de_dados.db') # MUDAR O NOME
-        db.row_factory = sqlite3.Row # Isto permite chamar colunas por nome
-    return db
 
-@app.route('/faq')
-def faq_stats():
-    db = get_db()
-    cursor = db.cursor()
-    
-    stats = {}
+# --------------------------
+# p1 — Maior metascore por género
+# --------------------------
+@APP.route('/faq/p1/')
+def pergunta1():
+    p1 = db.execute("""
+        SELECT g.name, s.title, m.metascore
+        FROM shows s
+        NATURAL JOIN metascore m
+        NATURAL JOIN types
+        NATURAL JOIN genres g
+        WHERE m.metascore = (
+            SELECT MAX(m2.metascore)
+            FROM metascore m2
+            NATURAL JOIN types 
+            NATURAL JOIN genres g1
+            WHERE g1.name = g.name
+        )
+        AND m.metascore_count = (
+            SELECT MAX(m3.metascore_count)
+            FROM metascore m3
+            NATURAL JOIN types
+            NATURAL JOIN genres g2
+            WHERE g2.genre_id = g.genre_id AND m3.metascore = m.metascore
+        )
+        ORDER BY g.name;
+    """).fetchall()
 
-    # 1. Maior Metascore (com desempate por contagem)
-    query_meta = """
-    SELECT g.name as genre, s.title, m.metascore
-    FROM shows s
-    NATURAL JOIN metascore m
-    NATURAL JOIN types
-    NATURAL JOIN genres g
-    WHERE m.metascore = (
-        SELECT MAX(m.metascore) FROM metascore m
-        NATURAL JOIN types NATURAL JOIN genres g1 WHERE g1.name = g.name
-    ) AND m.metascore_count = (
-        SELECT MAX(m1.metascore_count) FROM metascore m1
-        NATURAL JOIN types NATURAL JOIN genres g2 
-        WHERE g2.genre_id = g.genre_id AND m1.metascore = m.metascore 
-    )
-    ORDER BY g.name;
-    """
-    stats['top_metascore'] = cursor.execute(query_meta).fetchall()
+    return render_template("p1.html", p1=p1)
 
-    # 2. Maior Userscore
-    query_user = """
-    SELECT g.name as genre, s.title, u.userscore
-    FROM shows s
-    NATURAL JOIN userscore u
-    NATURAL JOIN types
-    NATURAL JOIN genres g
-    WHERE u.userscore = (
-        SELECT MAX(u.userscore) FROM userscore u
-        NATURAL JOIN types NATURAL JOIN genres g1 WHERE g1.name = g.name
-    ) AND u.userscore_count = (
-        SELECT MAX(u1.userscore_count) FROM userscore u1
-        NATURAL JOIN types NATURAL JOIN genres g2 
-        WHERE g2.genre_id = g.genre_id AND u1.userscore = u.userscore 
-    )
-    ORDER BY g.name;
-    """
-    stats['top_userscore'] = cursor.execute(query_user).fetchall()
 
-    # 3. Top 10 Diferença Percentual
-    query_diff_perc = """
-    SELECT s.title, ms.metascore, us.userscore * 10 AS userscore_scaled,
-    ABS(CAST(ms.metascore AS REAL) - (us.userscore * 10)) / (us.userscore * 10) * 100 AS diff_perc
-    FROM shows s
-    JOIN metascore ms ON s.show_id = ms.show_id
-    JOIN userscore us ON s.show_id = us.show_id
-    WHERE us.userscore_count >= 50 AND ms.metascore_count >= 10 AND (us.userscore * 10) > 0
-    ORDER BY diff_perc DESC LIMIT 10;
-    """
-    stats['diff_perc'] = cursor.execute(query_diff_perc).fetchall()
+# --------------------------
+# p2 — Maior userscore por género
+# --------------------------
+@APP.route('/faq/p2/')
+def pergunta2():
+    p2 = db.execute("""
+        SELECT g.name, s.title, u.userscore
+        FROM shows s
+        NATURAL JOIN userscore u
+        NATURAL JOIN types
+        NATURAL JOIN genres g
+        WHERE u.userscore = (
+            SELECT MAX(u2.userscore)
+            FROM userscore u2
+            NATURAL JOIN types 
+            NATURAL JOIN genres g1
+            WHERE g1.name = g.name
+        )
+        AND u.userscore_count = (
+            SELECT MAX(u3.userscore_count)
+            FROM userscore u3
+            NATURAL JOIN types
+            NATURAL JOIN genres g2
+            WHERE g2.genre_id = g.genre_id AND u3.userscore = u.userscore
+        )
+        ORDER BY g.name;
+    """).fetchall()
 
-    # 4. Top 20 Diferença Absoluta
-    query_diff_abs = """
-    SELECT s.title, ABS(m.metascore - (u.userscore * 10)) AS diff 
-    FROM shows s
-    NATURAL JOIN metascore m 
-    NATURAL JOIN userscore u
-    WHERE metascore_count != 0 AND userscore_count != 0
-    ORDER BY diff DESC, s.title LIMIT 20;
-    """
-    # Nota: ajustei u.userscore * 10 para ficar na mesma escala que metascore
-    stats['diff_abs'] = cursor.execute(query_diff_abs).fetchall()
+    return render_template("p2.html", p2=p2)
 
-    # 5. Diretores "Elite" (>5 shows, rating acima da média)
-    query_directors = """
-    SELECT p.name, COUNT(s.show_id) AS total, AVG(s.rating) AS avg_rating
-    FROM people p
-    JOIN directors d ON p.person_id = d.person_id
-    JOIN shows s ON d.show_id = s.show_id
-    GROUP BY p.person_id, p.name
-    HAVING COUNT(s.show_id) > 5
-    AND AVG(s.rating) > (SELECT AVG(rating) FROM shows WHERE rating IS NOT NULL)
-    ORDER BY avg_rating DESC;
-    """
-    stats['elite_directors'] = cursor.execute(query_directors).fetchall()
 
-    # 6. Pessoa "Cult" (User > 9.0, Meta < 60)
-    query_cult = """
-    WITH CultShows AS (
-        SELECT s.show_id FROM shows s
-        JOIN userscore us ON s.show_id = us.show_id
+# --------------------------
+# p3 — Top 10 maior diferença percentual
+# --------------------------
+@APP.route('/faq/p3/')
+def pergunta3():
+    p3 = db.execute("""
+        SELECT
+            s.title,
+            ms.metascore,
+            us.userscore * 10 AS userscore_scaled,
+            ABS(CAST(ms.metascore AS REAL) - (us.userscore * 10)) / (us.userscore * 10) * 100 AS score_difference_percentage
+        FROM shows s
         JOIN metascore ms ON s.show_id = ms.show_id
-        WHERE us.userscore > 9.0 AND ms.metascore < 60
-    ),
-    AllInvolvements AS (
-        SELECT person_id, show_id FROM directors
-        UNION ALL SELECT person_id, show_id FROM writers
-        UNION ALL SELECT person_id, show_id FROM cast
-        UNION ALL SELECT person_id, show_id FROM creators
-    )
-    SELECT p.name, COUNT(ai.show_id) AS count
-    FROM people p
-    JOIN AllInvolvements ai ON p.person_id = ai.person_id
-    JOIN CultShows cs ON ai.show_id = cs.show_id
-    GROUP BY p.person_id, p.name
-    ORDER BY count DESC LIMIT 1;
-    """
-    stats['cult_hero'] = cursor.execute(query_cult).fetchone()
+        JOIN userscore us ON s.show_id = us.show_id
+        WHERE us.userscore_count >= 50
+          AND ms.metascore_count >= 10
+          AND (us.userscore * 10) > 0
+        ORDER BY score_difference_percentage DESC
+        LIMIT 10;
+    """).fetchall()
 
-    # 7. Shows com mesmo elenco em anos diferentes
-    query_cast = """
-    WITH PrincipalCast AS (
-        SELECT show_id, GROUP_CONCAT(person_id ORDER BY person_id ASC) AS cast_list
-        FROM (
-            SELECT show_id, person_id, ROW_NUMBER() OVER(PARTITION BY show_id ORDER BY person_id ASC) as rn
-            FROM cast
-        ) WHERE rn <= 5 GROUP BY show_id HAVING COUNT(person_id) = 5
-    )
-    SELECT s1.title AS t1, s2.title AS t2, s1.releaseDate AS y1, s2.releaseDate AS y2
-    FROM PrincipalCast pc1
-    JOIN PrincipalCast pc2 ON pc1.cast_list = pc2.cast_list AND pc1.show_id < pc2.show_id
-    JOIN shows s1 ON pc1.show_id = s1.show_id
-    JOIN shows s2 ON pc2.show_id = s2.show_id
-    WHERE strftime('%Y', s1.releaseDate) <> strftime('%Y', s2.releaseDate);
-    """
-    stats['same_cast'] = cursor.execute(query_cast).fetchall()
+    return render_template("p3.html", p3=p3)
 
-    # 8. Pessoa com múltiplos papéis no mesmo show
-    query_roles = """
-    SELECT DISTINCT s.title, p.name
-    FROM shows s
-    LEFT JOIN directors d ON s.show_id = d.show_id
-    LEFT JOIN writers w ON s.show_id = w.show_id
-    LEFT JOIN creators c ON s.show_id = c.show_id
-    LEFT JOIN cast tc ON s.show_id = tc.show_id
-    LEFT JOIN people p ON p.person_id = COALESCE(d.person_id, w.person_id, c.person_id, tc.person_id)
-    WHERE (d.person_id IS NOT NULL AND w.person_id = d.person_id)
-       OR (d.person_id IS NOT NULL AND tc.person_id = d.person_id)
-       OR (d.person_id IS NOT NULL AND c.person_id = d.person_id)
-       OR (w.person_id IS NOT NULL AND tc.person_id = w.person_id)
-       OR (w.person_id IS NOT NULL AND c.person_id = w.person_id)
-    ORDER BY s.title LIMIT 50; 
-    """
-    # Adicionei LIMIT 50 para a página não ficar gigante
-    stats['multi_roles'] = cursor.execute(query_roles).fetchall()
 
-    return render_template('faq.html', stats=stats)
+# --------------------------
+# p4 — Top 20 maior diferença absoluta meta vs user
+# --------------------------
+@APP.route('/faq/p4/')
+def pergunta4():
+    p4 = db.execute("""
+        SELECT s.title, ABS(m.metascore - u.userscore) AS diferenca
+        FROM shows s
+        NATURAL JOIN metascore m
+        NATURAL JOIN userscore u
+        WHERE metascore_count != 0 AND userscore_count != 0
+        ORDER BY diferenca DESC, s.title
+        LIMIT 20;
+    """).fetchall()
+
+    return render_template("p4.html", p4=p4)
+
+
+# --------------------------
+# p5 — Diretores com >5 shows e rating acima da média geral
+# --------------------------
+@APP.route('/faq/p5/')
+def pergunta5():
+    p5 = db.execute("""
+        SELECT p.name,
+               COUNT(s.show_id) AS total_shows_directed,
+               AVG(s.rating) AS director_average_rating
+        FROM people p
+        JOIN directors d ON p.person_id = d.person_id
+        JOIN shows s ON d.show_id = s.show_id
+        GROUP BY p.person_id, p.name
+        HAVING COUNT(s.show_id) > 5
+           AND AVG(s.rating) > (SELECT AVG(rating) FROM shows WHERE rating IS NOT NULL)
+        ORDER BY director_average_rating DESC;
+    """).fetchall()
+
+    return render_template("p5.html", p5=p5)
+
+
+# --------------------------
+# p6 — Pessoa mais envolvida em cult-shows
+# --------------------------
+@APP.route('/faq/p6/')
+def pergunta6():
+    p6 = db.execute("""
+        WITH CultShows AS (
+            SELECT s.show_id
+            FROM shows s
+            JOIN userscore us ON s.show_id = us.show_id
+            JOIN metascore ms ON s.show_id = ms.show_id
+            WHERE us.userscore > 9.0
+              AND ms.metascore < 60
+        ),
+        AllInvolvements AS (
+            SELECT person_id, show_id FROM directors
+            UNION ALL
+            SELECT person_id, show_id FROM writers
+            UNION ALL
+            SELECT person_id, show_id FROM top_cast
+            UNION ALL
+            SELECT person_id, show_id FROM creators
+        )
+        SELECT p.name,
+               COUNT(ai.show_id) AS cult_show_count
+        FROM people p
+        JOIN AllInvolvements ai ON p.person_id = ai.person_id
+        JOIN CultShows cs ON ai.show_id = cs.show_id
+        GROUP BY p.person_id, p.name
+        ORDER BY cult_show_count DESC
+        LIMIT 1;
+    """).fetchall()
+
+    return render_template("p6.html", p6=p6)
+
+
+# --------------------------
+# p7 — Shows com o mesmo elenco principal em anos diferentes
+# --------------------------
+@APP.route('/faq/p7/')
+def pergunta7():
+    p7 = db.execute("""
+        WITH PrincipalCast AS (
+            SELECT
+                show_id,
+                GROUP_CONCAT(person_id ORDER BY person_id ASC) AS principal_cast_list
+            FROM (
+                SELECT show_id, person_id,
+                       ROW_NUMBER() OVER(PARTITION BY show_id ORDER BY person_id ASC) AS rn
+                FROM top_cast
+            )
+            WHERE rn <= 5
+            GROUP BY show_id
+            HAVING COUNT(person_id) = 5
+        )
+        SELECT
+            s1.title AS show_1_title,
+            s2.title AS show_2_title,
+            s1.releaseDate AS show_1_year,
+            s2.releaseDate AS show_2_year
+        FROM PrincipalCast pc1
+        JOIN PrincipalCast pc2
+          ON pc1.principal_cast_list = pc2.principal_cast_list
+         AND pc1.show_id < pc2.show_id
+        JOIN shows s1 ON pc1.show_id = s1.show_id
+        JOIN shows s2 ON pc2.show_id = s2.show_id
+        WHERE STRFTIME('%Y', s1.releaseDate) <> STRFTIME('%Y', s2.releaseDate);
+    """).fetchall()
+
+    return render_template("p7.html", p7=p7)
+
+
+# --------------------------
+# p8 — Shows onde uma pessoa teve papéis diferentes
+# --------------------------
+@APP.route('/faq/p8/')
+def pergunta8():
+    p8 = db.execute("""
+        SELECT DISTINCT s.title, p.name
+        FROM shows s
+        LEFT JOIN directors d ON s.show_id = d.show_id
+        LEFT JOIN writers w ON s.show_id = w.show_id
+        LEFT JOIN creators c ON s.show_id = c.show_id
+        LEFT JOIN top_cast tc ON s.show_id = tc.show_id
+        LEFT JOIN people p ON p.person_id = COALESCE(d.person_id, w.person_id, c.person_id, tc.person_id)
+        WHERE (d.person_id IS NOT NULL AND w.person_id = d.person_id)
+           OR (d.person_id IS NOT NULL AND tc.person_id = d.person_id)
+           OR (d.person_id IS NOT NULL AND c.person_id = d.person_id)
+           OR (w.person_id IS NOT NULL AND tc.person_id = w.person_id)
+           OR (w.person_id IS NOT NULL AND c.person_id = w.person_id)
+        ORDER BY s.title;
+    """).fetchall()
+
+    return render_template("p8.html", p8=p8)
+
+
+# --------------------------
+# p9 — Top 100 shows com mais pessoas na produção
+# --------------------------
+@APP.route('/faq/p9/')
+def pergunta9():
+    p9 = db.execute("""
+        SELECT s.title, 
+               COUNT(DISTINCT d.person_id) +
+               COUNT(DISTINCT w.person_id) +
+               COUNT(DISTINCT c.person_id) AS total_people
+        FROM shows s
+        LEFT JOIN directors d ON s.show_id = d.show_id
+        LEFT JOIN writers w ON s.show_id = w.show_id
+        LEFT JOIN creators c ON s.show_id = c.show_id
+        GROUP BY s.title
+        ORDER BY total_people DESC
+        LIMIT 100;
+    """).fetchall()
+
+    return render_template("p9.html", p9=p9)
+
+
+# --------------------------
+# p10 — Bottom 100 shows com menos pessoas (cast+writer+creator+director)
+# --------------------------
+@APP.route('/faq/p10/')
+def pergunta10():
+    p10 = db.execute("""
+        SELECT s.title,
+               COUNT(DISTINCT d.person_id) +
+               COUNT(DISTINCT w.person_id) +
+               COUNT(DISTINCT c.person_id) AS total_people
+        FROM shows s
+        LEFT JOIN directors d ON s.show_id = d.show_id
+        LEFT JOIN writers w ON s.show_id = w.show_id
+        LEFT JOIN creators c ON s.show_id = c.show_id
+        GROUP BY s.title
+        HAVING total_people > 0
+        ORDER BY total_people
+        LIMIT 100;
+    """).fetchall()
+
+    return render_template("p10.html", p10=p10)

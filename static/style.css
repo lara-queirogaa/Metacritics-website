@@ -1,9 +1,9 @@
 /*
- * TEMA: CINEMA NOIR (Vermelho & Preto)
- * Modificado a partir do padrão do Pandoc
+ * Tema: Cinema Noir (Red & Black)
+ * Atualizado para Pandoc HTML
  */
 
-/* Importar fontes de cinema */
+/* Importando fontes do Google Fonts: Oswald (Títulos) e Lato (Texto) */
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Oswald:wght@500;700&display=swap');
 
 html {
@@ -11,19 +11,19 @@ html {
   overflow-y: scroll;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
-  background-color: #050505; /* Fundo geral preto */
+  background-color: #0a0a0a; /* Fundo da página muito escuro */
 }
 
 body {
-  color: #dcdcdc; /* Texto branco sujo (para não cansar a vista) */
-  font-family: 'Lato', Helvetica, Arial, sans-serif;
-  font-size: 16px; /* Aumentado ligeiramente para leitura */
+  color: #e0e0e0; /* Branco "sujo" para não cansar a vista */
+  font-family: 'Lato', Helvetica, sans-serif;
+  font-size: 16px; /* Aumentei um pouco para leitura em modo noturno */
   line-height: 1.7;
   padding: 2em;
   margin: auto;
-  max-width: 46em;
-  background: #121212; /* Fundo da "folha" */
-  box-shadow: 0 0 30px rgba(255, 0, 0, 0.1); /* Brilho subtil vermelho */
+  max-width: 46em; /* Um pouco mais largo para telas modernas */
+  background: #121212; /* Fundo do corpo do texto */
+  box-shadow: 0 0 50px rgba(0,0,0,0.8); /* Sombra para destacar o conteúdo */
 }
 
 /* --- Links --- */
@@ -31,32 +31,32 @@ body {
 a {
   color: #ff4d4d; /* Vermelho claro */
   text-decoration: none;
+  transition: all 0.3s ease;
   border-bottom: 1px dotted #ff4d4d;
-  transition: all 0.2s ease;
 }
 
 a:visited {
-  color: #cc0000;
+  color: #cc0000; /* Vermelho mais escuro */
 }
 
 a:hover {
-  color: #ffffff;
-  text-shadow: 0 0 5px #ff0000;
-  border-bottom: 1px solid #ffffff;
+  color: #fff; /* Branco ao passar o mouse */
+  text-shadow: 0 0 8px #ff0000; /* Efeito de brilho neon */
+  border-bottom: 1px solid #fff;
 }
 
 a:active {
-  color: #ff0000;
+  color: #faa700;
 }
 
 a:focus {
   outline: thin dotted;
 }
 
-/* --- Seleção de Texto --- */
+/* --- Seleção de Texto (Highlight) --- */
 
 *::-moz-selection {
-  background: #b30000; /* Vermelho Sangue */
+  background: #b30000; /* Fundo vermelho sangue */
   color: #fff;
 }
 
@@ -69,46 +69,44 @@ p {
   margin: 1em 0;
 }
 
+/* --- Imagens --- */
+
 img {
   max-width: 100%;
   border-radius: 4px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Sombra estilo cinema */
 }
 
-/* --- Títulos (Fonte Oswald) --- */
+/* --- Títulos (Tipografia de Poster) --- */
 
 h1, h2, h3, h4, h5, h6 {
-  color: #ff3333; /* Vermelho Cinema */
-  line-height: 125%;
-  margin-top: 2em;
-  font-family: 'Oswald', sans-serif;
+  color: #ff3333; /* Vermelho vibrante */
+  line-height: 120%;
+  margin-top: 1.5em;
+  font-family: 'Oswald', sans-serif; /* Fonte estilo poster de filme */
   font-weight: 700;
-  text-transform: uppercase;
+  text-transform: uppercase; /* Letras maiúsculas para impacto */
   letter-spacing: 1px;
 }
 
-h1 {
-  font-size: 2.5em;
-  border-bottom: 2px solid #333;
-  padding-bottom: 0.2em;
-}
-
+h1 { font-size: 2.5em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
 h2 { font-size: 2em; }
-h3 { font-size: 1.5em; color: #ff6666; }
+h3 { font-size: 1.5em; color: #ff6666; } /* Subtítulos um pouco mais claros */
 h4 { font-size: 1.2em; }
 h5 { font-size: 1em; }
 h6 { font-size: 0.9em; color: #888; }
 
-/* --- Citações --- */
+/* --- Citações (Quotes) --- */
 
 blockquote {
-  color: #aaa;
+  color: #bbbbbb;
   margin: 2em 0;
   padding-left: 1.5em;
-  border-left: 5px solid #cc0000; /* Barra vermelha */
-  background-color: #1a1a1a;
-  padding: 1em;
+  border-left: 4px solid #cc0000; /* Barra lateral vermelha */
+  background: #1a1a1a;
+  padding: 15px;
   font-style: italic;
+  border-radius: 0 4px 4px 0;
 }
 
 hr {
@@ -123,9 +121,9 @@ hr {
 /* --- Código --- */
 
 pre, code, kbd, samp {
-  color: #ffcccc;
-  font-family: monospace, monospace;
-  font-size: 0.98em;
+  color: #ffcccc; /* Texto avermelhado claro */
+  font-family: 'Courier New', monospace;
+  font-size: 0.95em;
   background-color: #1e1e1e;
 }
 
@@ -134,22 +132,35 @@ pre {
   word-wrap: break-word;
   padding: 15px;
   border: 1px solid #333;
-  border-left: 2px solid #ff3333;
+  border-radius: 4px;
+  border-left: 3px solid #ff3333;
 }
 
 b, strong {
   font-weight: bold;
-  color: #fff;
+  color: #fff; /* Negrito em branco puro para destaque */
 }
 
 mark {
-  background: #cc0000;
+  background: #b30000;
   color: #fff;
   font-style: italic;
   font-weight: bold;
 }
 
-/* --- Listas e Tabelas --- */
+/* --- Listas --- */
+
+ul, ol {
+  margin: 1em 0;
+  padding: 0 0 0 2em;
+}
+
+/* Marcadores de lista personalizados (opcional) */
+ul li::marker {
+  color: #ff3333;
+}
+
+/* --- Tabelas --- */
 
 table {
   margin-bottom: 2em;
@@ -162,11 +173,12 @@ table {
 
 table th {
   padding: .5em 1em;
-  background-color: #222;
+  background-color: #2a2a2a;
   color: #ff3333;
   border-top: 1px solid #333;
   border-left: 1px solid #333;
   font-family: 'Oswald', sans-serif;
+  letter-spacing: 1px;
 }
 
 table td {
@@ -178,8 +190,10 @@ table td {
 }
 
 table tr:hover td {
-  background-color: #1a1a1a;
+    background-color: #1a1a1a; /* Highlight na linha da tabela */
 }
+
+/* --- Ajustes Responsivos e Impressão --- */
 
 .author {
   font-size: 1.2em;
@@ -188,76 +202,32 @@ table tr:hover td {
   font-family: 'Oswald', sans-serif;
 }
 
-/* --- Linha de Lista Estilo “Tabela” Ajustada --- */
-.list-line {
-  list-style-type: none;      /* Remove bullets */
-  padding: 0;
-  margin: 0 0 1em 0;
-  width: 100%;
-}
-
-.list-line li {
-  background-color: #1a1a1a; /* Fundo escuro para cada linha */
-  color: #ffffff;             /* Texto totalmente branco */
-  padding: 0;                 /* Retira padding do li, será no link */
-  border-bottom: 1px solid #333; /* Linha separadora */
-  font-family: 'Lato', sans-serif;
-}
-
-.list-line li:hover {
-  background-color: #2a2a2a; /* Hover mais claro */
-}
-
-.list-line li a.list-line-link {
-    display: block;              /* Ocupa toda a linha */
-    width: 100%;
-    color: #ffffff;              /* Texto branco */
-    text-decoration: none;       /* Remove sublinhado/pontos */
-    padding: 10px 15px;          /* Padding da linha */
-    transition: background-color 0.2s ease;
-    box-sizing: border-box;      /* Garante que padding não ultrapassa o li */
-}
-
-.list-line li a.list-line-link:hover {
-    background-color: #2a2a2a;  /* Mantém hover */
-    color: #ffffff;              /* Continua branco */
-    border-bottom: none;         /* Remove qualquer linha */
-}
-
-
-/* --- Responsividade e Impressão --- */
-
 @media only screen and (min-width: 480px) {
-  body {
-    font-size: 18px;
-  }
+  body { font-size: 18px; }
 }
 
 @media print {
+  /* Mantendo configurações de impressão mais limpas para economizar tinta */
   * {
     background: transparent !important;
     color: black !important;
-    filter: none !important;
-    -ms-filter: none !important;
+    box-shadow: none !important;
     text-shadow: none !important;
   }
-
+  
   body {
     font-size: 12pt;
     max-width: 100%;
-    background: white;
+    background: #fff;
   }
 
-  a, a:visited {
-    text-decoration: underline;
-    color: black;
+  a, a:visited { text-decoration: underline; color: black; }
+  
+  h1, h2, h3, h4, h5, h6 {
+      color: black;
+      text-transform: none;
   }
-  
-  h1, h2, h3 { color: black; }
-  
 
-
-  
-
-  blockquote { border-left-color: black; }
+  blockquote { border-left: 2px solid #999; }
+  pre { border: 1px solid #999; }
 }
