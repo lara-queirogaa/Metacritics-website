@@ -1,134 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ movie.title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% set current_page = "movies" %}
 
-    <h1>{{ movie.title }}</h1>
+{% block content %}
+<h1>{{ movie.title }}</h1>
 
-    <h2>Information</h2>
-    <ul>
-        <li><strong>ID:</strong> {{ movie.show_id }}</li>
-        <li><strong>Release Date:</strong> {{ movie.releaseDate }}</li>
-        <li><strong>Rating:</strong> {{ movie.rating }}</li>
+<h2>Information</h2>
+<ul>
+    <li><strong>ID:</strong> {{ movie.show_id }}</li>
+    <li><strong>Release Date:</strong> {{ movie.releaseDate }}</li>
+    <li><strong>Rating:</strong> {{ movie.rating }}</li>
 
-        {% if movie.num_seasons != 0 %}
-            <li><strong>Number of seasons:</strong> {{ movie.num_seasons }}</li>
-            <li><strong>Duration of each episode:</strong> {{ movie.duration }}</li>
-        {% else %}
-            <li><strong>Duration:</strong> {{ movie.duration }}</li>
-        {% endif %}
+    {% if movie.num_seasons != 0 %}
+        <li><strong>Number of seasons:</strong> {{ movie.num_seasons }}</li>
+        <li><strong>Duration of each episode:</strong> {{ movie.duration }}</li>
+    {% else %}
+        <li><strong>Duration:</strong> {{ movie.duration }}</li>
+    {% endif %}
 
-        <li>
-            <strong>Genres:</strong>
-            {% if genres %}
-                {% for g in genres %}
-                    {{ g.name }}{% if not loop.last %}, {% endif %}
-                {% endfor %}
-            {% else %}
-                No genres in dataset
-            {% endif %}
-        </li>
-
-        <li><strong>Tagline:</strong> {{ movie.tagline }}</li>
-        <li><strong>Description:</strong> {{ movie.description }}</li>
-    </ul>
-
-    <h2>Main actors</h2>
-    {% if actors %}
-        <p>
-            <ul>
-            {% for a in actors %}
-                <li><a href="/person/{{ a.person_id }}/">{{ a.name }}</a>{% if not loop.last %}, {% endif %}</li>
+    <li>
+        <strong>Genres:</strong>
+        {% if genres %}
+            {% for g in genres %}
+                {{ g.name }}{% if not loop.last %}, {% endif %}
             {% endfor %}
-            </ul>
-        </p>
-    {% else %}
-        <p>No actors in dataset</p>
-    {% endif %}
+        {% else %}
+            No genres in dataset
+        {% endif %}
+    </li>
 
-    <h2>Production Team</h2>
+    <li><strong>Tagline:</strong> {{ movie.tagline }}</li>
+    <li><strong>Description:</strong> {{ movie.description }}</li>
+</ul>
 
-    <table border="1" style="border-collapse: collapse; width: 80%;">
-        <tr>
-            <th>Creators</th>
-            <th>Writers</th>
-            <th>Directors</th>
-            <th>Producers</th>
-        </tr>
-        <tr>
-            <!-- Creators -->
-            <td>
-                {% if creators %}
-                    <ul>
-                    {% for c in creators %}
-                        <li><a href="/person/{{ c.person_id }}/">{{ c.name }}</a></li>
-                    {% endfor %}
-                    </ul>
-                {% else %}
-                    None
-                {% endif %}
-            </td>
+<h2>Main actors</h2>
+{% if actors %}
+<ul>
+    {% for a in actors %}
+        <li><a href="/person/{{ a.person_id }}/">{{ a.name }}</a>{% if not loop.last %}, {% endif %}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No actors in dataset</p>
+{% endif %}
 
-            <!-- Writers -->
-            <td>
-                {% if writers %}
-                    <ul>
-                    {% for w in writers %}
-                        <li><a href="/person/{{ w.person_id }}/">{{ w.name }}</a></li>
-                    {% endfor %}
-                    </ul>
-                {% else %}
-                    None
-                {% endif %}
-            </td>
+<h2>Production Team</h2>
+<table border="1">
+    <tr>
+        <th>Creators</th>
+        <th>Writers</th>
+        <th>Directors</th>
+        <th>Producers</th>
+    </tr>
+    <tr>
+        <td>
+            {% if creators %}
+                <ul>
+                {% for c in creators %}
+                    <li><a href="/person/{{ c.person_id }}/">{{ c.name }}</a></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                None
+            {% endif %}
+        </td>
+        <td>
+            {% if writers %}
+                <ul>
+                {% for w in writers %}
+                    <li><a href="/person/{{ w.person_id }}/">{{ w.name }}</a></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                None
+            {% endif %}
+        </td>
+        <td>
+            {% if directors %}
+                <ul>
+                {% for d in directors %}
+                    <li><a href="/person/{{ d.person_id }}/">{{ d.name }}</a></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                None
+            {% endif %}
+        </td>
+        <td>
+            {% if producers %}
+                <ul>
+                {% for p in producers %}
+                    <li><a href="/production-companies/{{ p.producer_id }}/">{{ p.name }}</a></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                No producers
+            {% endif %}
+        </td>
+    </tr>
+</table>
 
-            <!-- Directors -->
-            <td>
-                {% if directors %}
-                    <ul>
-                    {% for d in directors %}
-                        <li><a href="/person/{{ d.person_id }}/">{{ d.name }}</a></li>
-                    {% endfor %}
-                    </ul>
-                {% else %}
-                    None
-                {% endif %}
-            </td>
-
-            <!-- Producers -->
-            <td>
-                {% if producers %}
-                    <ul>
-                    {% for p in producers %}
-                        <li><a href="/production-companies/{{ p.producer_id }}/">{{ p.name }}</a></li>
-                    {% endfor %}
-                    </ul>
-                {% else %}
-                    No producers
-                {% endif %}
-            </td>
-        </tr>
-    </table>
-
-
-    <h2>Scores</h2>
-    {% if scores %}
-        <ul>
-        {% for s in scores %}
-            <li><strong>Metascore:</strong> {{ s.metascore }}/100</li>
-            <li><strong>Userscore:</strong> {{ s.userscore }}/100</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No scores available</p>
-    {% endif %}
-
-    <p><a href="/shows/">Back to movie list</a></p>
-    <p><a href="/">Back to home page</a></p>
-
-</body>
-</html>
+<h2>Scores</h2>
+{% if scores %}
+<ul>
+    {% for s in scores %}
+        <li><strong>Metascore:</strong> {{ s.metascore }}/100</li>
+        <li><strong>Userscore:</strong> {{ s.userscore }}/100</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No scores available</p>
+{% endif %}
+{% endblock %}

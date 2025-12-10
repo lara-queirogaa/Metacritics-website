@@ -1,16 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ person.name }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% set current_page = "people" %}
 
+{% block content %}
 <h1>{{ person.name }}</h1>
 
 <h2>Filmes e Papéis</h2>
-
 <ul class="list-line">
     {% for m in movies %}
         <li>
@@ -20,9 +14,4 @@
         </li>
     {% endfor %}
 </ul>
-
-<p><a href="/people/">Voltar à lista de pessoas</a></p>
-<p><a href="/">Back to home page</a></p>
-
-</body>
-</html>
+{% endblock %}

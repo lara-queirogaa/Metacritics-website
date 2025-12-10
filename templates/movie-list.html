@@ -1,23 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Movie List</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1>Movie List</h1>
+{% extends "base.html" %}
+{% set current_page = "movies" %}
 
-    <ul class="list-line">
-        {% for movie in movies %}
-            <li>
-                <a href="/shows/{{ movie.show_id }}/" class="list-line-link">
-                    {{ movie.show_id }} - {{ movie.title }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+{% block content %}
+<h1>Movie List</h1>
 
-    <p><a href="/">Back to home page</a></p>
-</body>
-</html>
+<ul class="list-line">
+    {% for movie in movies %}
+        <li>
+            <a href="/shows/{{ movie.show_id }}/" class="list-line-link">
+                {{ movie.show_id }} - {{ movie.title }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

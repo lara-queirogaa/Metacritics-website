@@ -1,31 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Production company: {{ info.producer_name }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1>Production company: {{ info.producer_name }}</h1>
+{% extends "base.html" %}
+{% set current_page = "production-companies" %}
 
-    <h2>Information</h2>
-    <ul>
-        <li><strong>Number of movies made by this production company:</strong> {{ info.total }}</li>
-    </ul>
+{% block content %}
+<h1>Production company: {{ info.producer_name }}</h1>
 
-    <h2>Movie list</h2>
+<h2>Information</h2>
+<ul>
+    <li><strong>Number of movies made by this production company:</strong> {{ info.total }}</li>
+</ul>
 
-    <ul class="list-line">
-        {% for m in movies %}
-            <li>
-                <a href="/shows/{{ m.show_id }}/" class="list-line-link">
-                    {{ m.show_id }} - {{ m.title }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-
-    <p><a href="/production-companies/">Back to production companies</a></p>
-    <p><a href="/">Back to home page</a></p>
-</body>
-</html>
+<h2>Movie list</h2>
+<ul class="list-line">
+    {% for m in movies %}
+        <li>
+            <a href="/shows/{{ m.show_id }}/" class="list-line-link">
+                {{ m.show_id }} - {{ m.title }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
