@@ -2,10 +2,10 @@
 {% set current_page = "movies" %}
 
 {% block content %}
-<h1>Movie List</h1>
+<h1>Show List</h1>
 
 <form method="get" action="/shows/" style="margin-bottom: 1em;">
-    <input type="text" name="search" placeholder="Search movie..." value="{{ request.args.get('search','') }}">
+    <input type="text" name="search" placeholder="Search show..." value="{{ request.args.get('search','') }}">
     <button type="submit">Search</button>
 </form>
 

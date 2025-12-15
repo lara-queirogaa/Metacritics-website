@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Shows where a person had different roles</h1>
+<h1>Top 5 Genres with Most Movies</h1>
 
 <table class="styled-table">
     <thead>
         <tr>
-            <th>Title</th>
-            <th>Person</th>
+            <th>Genre</th>
+            <th>Total Movies</th>
         </tr>
     </thead>
     <tbody>
-        {% for row in p8 %}
+        {% for row in p11 %}
         <tr>
-            <td>{{ row.title }}</td>
-            <td>{{ row.name }}</td>
+            <td>{{ row.genre }}</td>
+            <td>{{ row.total_movies }}</td>
         </tr>
         {% endfor %}
     </tbody>
